@@ -1,6 +1,6 @@
 # Informe – Proyecto Docker Test
 
-## 📌 Descripción
+##  Descripción
 Este proyecto corresponde a una prueba de integración continua (CI) para **dockerizar** una aplicación React y automatizar la construcción y publicación de la imagen en **Docker Hub** utilizando **GitHub Actions**.  
 
 El objetivo principal es demostrar el ciclo completo:  
@@ -10,7 +10,7 @@ El objetivo principal es demostrar el ciclo completo:
 
 ---
 
-## ⚙️ Estructura del proyecto
+##  Estructura del proyecto
 ```
 .
 ├── public/                 # Archivos estáticos de React
@@ -75,13 +75,13 @@ Acceder en el navegador a:
 
 ---
 
-## ✅ Validación del CI/CD
+##  Validación del CI/CD
 1. Confirmar en **GitHub Actions** que el workflow corre exitosamente al hacer `git push` en la rama `main`.  
 2. Verificar en **Docker Hub** que la imagen `docker-test:latest` aparece publicada.  
 3. Descargar y correr la imagen directamente desde Docker Hub:  
    ```bash
-   docker pull <usuario-dockerhub>/docker-test:latest
-   docker run -p 3000:80 <usuario-dockerhub>/docker-test:latest
+   docker pull samub18/docker-test:latest
+   docker run -p 3000:80 samub18/docker-test:latest
    ```
 
 ---
