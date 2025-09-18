@@ -73,6 +73,10 @@ docker run -p 3000:80 docker-test
 Acceder en el navegador a:  
 [http://localhost:3000](http://localhost:3000)  
 
+![funcional](src/pics/pullhub.png)
+![funcional](src/pics/runhub.png)
+![funcional](src/pics/funtional.png)
+
 ---
 
 ##  Validación del CI/CD
@@ -83,6 +87,8 @@ Acceder en el navegador a:
    docker pull samub18/docker-test:latest
    docker run -p 3000:80 samub18/docker-test:latest
    ```
+   ![funcional](src/pics/dockerhub.png)
+![workflow](src/pics/workflow.png)
 
 ---
 
