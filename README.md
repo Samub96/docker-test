@@ -1,71 +1,92 @@
-# Getting Started with Create React App
+# Informe – Proyecto Docker Test
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-hi
+##  Descripción
+Este proyecto corresponde a una prueba de integración continua (CI) para **dockerizar** una aplicación React y automatizar la construcción y publicación de la imagen en **Docker Hub** utilizando **GitHub Actions**.  
 
-## Available Scripts
+El objetivo principal es demostrar el ciclo completo:  
+1. Construcción de la imagen.  
+2. Uso de múltiples etapas en Docker para optimización.  
+3. Publicación automática en un registro externo (Docker Hub).  
 
-In the project directory, you can run:
+---
 
-### `npm start`
+##  Estructura del proyecto
+```
+.
+├── public/                 # Archivos estáticos de React
+├── src/                    # Código fuente de la aplicación
+├── Dockerfile              # Definición de la imagen Docker
+├── .dockerignore           # Archivos ignorados en la build
+├── .github/workflows/      # Configuración de CI/CD
+│   └── docker-build.yml
+├── package.json
+└── README.md
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+##  Dockerfile
+El contenedor se construye en dos etapas:  
 
-### `npm test`
+1. **Etapa de build**  
+   - Imagen base: `node:18-alpine`  
+   - Instala dependencias y ejecuta `npm run build`.  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Etapa de producción**  
+   - Imagen base: `nginx:alpine`  
+   - Copia los archivos compilados al directorio de Nginx.  
+   - Expone el puerto `80`.  
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+##  GitHub Actions
+El flujo de CI/CD (`.github/workflows/docker-build.yml`) realiza:  
+1. **Checkout** del código.  
+2. Configuración de **Docker Buildx**.  
+3. **Login en Docker Hub** usando secretos de GitHub (`DOCKER_USERNAME` y `DOCKER_PASSWORD`).  
+4. **Build y Push** de la imagen con el tag:  
+   ```
+   samub18/docker-test:latest
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Configuración de secretos
+En GitHub → `Settings > Secrets and variables > Actions` se deben definir:  
 
-### `npm run eject`
+- `DOCKER_USERNAME`: usuario de Docker Hub.  
+- `DOCKER_PASSWORD`: contraseña o token de acceso de Docker Hub.  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+##  Ejecución local
+### Construcción manual
+```bash
+docker build -t docker-test .
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Ejecución
+```bash
+docker run -p 3000:80 docker-test
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Acceder en el navegador a:  
+[http://localhost:3000](http://localhost:3000)  
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+##  Validación del CI/CD
+1. Confirmar en **GitHub Actions** que el workflow corre exitosamente al hacer `git push` en la rama `main`.  
+2. Verificar en **Docker Hub** que la imagen `docker-test:latest` aparece publicada.  
+3. Descargar y correr la imagen directamente desde Docker Hub:  
+   ```bash
+   docker pull samub18/docker-test:latest
+   docker run -p 3000:80 samub18/docker-test:latest
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Resultados
+- Se logró empaquetar la aplicación React en una imagen ligera con Nginx.  
+- El pipeline de GitHub Actions permite automatizar la construcción y despliegue.  
+- La imagen final es portable y puede ejecutarse en cualquier entorno con Docker.  
